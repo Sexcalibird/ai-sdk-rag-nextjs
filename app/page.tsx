@@ -87,8 +87,8 @@ export default function Chat() {
     };
     reader.readAsDataURL(file);
   };
-  console.log(img);
 
+  
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4 max-sm:h-screen">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[700px] max-sm:h-full">

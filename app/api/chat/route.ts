@@ -67,7 +67,7 @@ export async function POST(req: Request) {
         const payload = await req.json();
 
         // Forward request to NestJS backend
-        const response = await fetch('http://localhost:8000/api/chatbot/chat', {
+        const response = await fetch(process.env.API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
