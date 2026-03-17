@@ -59,9 +59,10 @@ export async function POST(req: Request) {
     // });
 
     // return result.toUIMessageStreamResponse();
+    console.log(1)
 
     const session = await getServerSession(authOptions);
-
+console.log(2)
     try {
         // Extract messages from incoming request
         const payload = await req.json();
@@ -75,7 +76,7 @@ export async function POST(req: Request) {
             },
             body: JSON.stringify(payload),
         });
-
+console.log(3)
         if (response.status === 401) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -88,12 +89,12 @@ export async function POST(req: Request) {
                 headers: { 'Content-Type': 'text/event-stream' },
             });
         }
-
+console.log(4)
         // Otherwise, just return JSON
         const data = await response.json();
         return Response.json(data);
     } catch (error) {
         console.error('Chat proxy error:', error);
-        return Response.json({ error: 'Failed to fetch from chatbot API' }, { status: 500 });
+        return Response.json({ error }, { status: 500 });
     }
 }
