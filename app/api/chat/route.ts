@@ -59,16 +59,15 @@ export async function POST(req: Request) {
     // });
 
     // return result.toUIMessageStreamResponse();
-    console.log(1)
 
     const session = await getServerSession(authOptions);
-console.log(2)
+
     try {
         // Extract messages from incoming request
         const payload = await req.json();
 
         // Forward request to NestJS backend
-        const response = await fetch('http://123.26.252.98:4433/api/chatbot/chat', {
+        const response = await fetch(process.env.API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +75,7 @@ console.log(2)
             },
             body: JSON.stringify(payload),
         });
-console.log(3)
+
         if (response.status === 401) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -89,12 +88,12 @@ console.log(3)
                 headers: { 'Content-Type': 'text/event-stream' },
             });
         }
-console.log(4)
+
         // Otherwise, just return JSON
         const data = await response.json();
         return Response.json(data);
     } catch (error) {
         console.error('Chat proxy error:', error);
-        return Response.json({ error }, { status: 500 });
+        return Response.json({ error: 'Failed to fetch from chatbot API' }, { status: 500 });
     }
 }
