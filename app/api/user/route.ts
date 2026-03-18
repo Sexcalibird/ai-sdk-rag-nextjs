@@ -5,7 +5,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     // console.log(session?.user?.token)
     try {
-        const response = await fetch(`https://app.capnuochaiphong.com.vn/MoiNoi/api/sdt/${session.user.account.taikhoan}`, {
+        const response = await fetch(`https://chatcskh.capnuochaiphong.com.vn:4433/api/cnhp`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
