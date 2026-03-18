@@ -6,7 +6,6 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { signOut } from 'next-auth/react';
 import { authOptions } from '@/store/authOpt';
-import axios from 'axios';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -65,45 +64,16 @@ export async function POST(req: Request) {
 
     try {
         // Extract messages from incoming request
-        // const payload = await req.json();
-
-        // // Forward request to NestJS backend
-        // const response = await fetch(process.env.API_URL, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': `Bearer ${session?.user?.token}`
-        //     },
-        //     body: JSON.stringify(payload),
-        // });
-
-        // if (response.status === 401) {
-        //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        // }
-
-        // // If NestJS sends a stream (like text/event-stream)
-        // const contentType = response.headers.get('content-type') ?? '';
-        // if (contentType.includes('text/event-stream')) {
-        //     // Pipe the stream directly back to the client
-        //     return new Response(response.body, {
-        //         headers: { 'Content-Type': 'text/event-stream' },
-        //     });
-        // }
-
-        // // Otherwise, just return JSON
-        // const data = await response.json();
-        // return Response.json(data);
-
         const payload = await req.json();
 
         // Forward request to NestJS backend
-        const response = await axios.post(process.env.API_URL, payload, {
+        const response = await fetch(process.env.API_URL, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${session?.user?.token}`
             },
-            responseType: 'stream',
-            validateStatus: (status) => status < 500,
+            body: JSON.stringify(payload),
         });
 
         if (response.status === 401) {
@@ -111,24 +81,17 @@ export async function POST(req: Request) {
         }
 
         // If NestJS sends a stream (like text/event-stream)
-        const contentType = response.headers['content-type'] ?? '';
+        const contentType = response.headers.get('content-type') ?? '';
         if (contentType.includes('text/event-stream')) {
             // Pipe the stream directly back to the client
-            const webStream = new ReadableStream({
-                start(controller) {
-                    response.data.on('data', (chunk: Buffer) => controller.enqueue(chunk));
-                    response.data.on('end', () => controller.close());
-                    response.data.on('error', (err: Error) => controller.error(err));
-                },
-            });
-
-            return new Response(webStream, {
+            return new Response(response.body, {
                 headers: { 'Content-Type': 'text/event-stream' },
             });
         }
 
         // Otherwise, just return JSON
-        return Response.json(response.data);
+        const data = await response.json();
+        return Response.json(data);
     } catch (error) {
         console.error('Chat proxy error:', error);
         return Response.json({ error: 'Failed to fetch from chatbot API' }, { status: 500 });

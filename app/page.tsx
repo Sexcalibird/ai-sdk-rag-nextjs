@@ -23,15 +23,15 @@ export default function Chat() {
     // onFinish: (modelMessages) => {
     //   setChat(modelMessages.messages);
     // }
-    transport: new DefaultChatTransport({
-      fetch: async (url, options) => {
-        const res = await fetch(url, options);
-        if (res.status === 401) {
-          signOut();
-        }
-        return res;
-      },
-    })
+    // transport: new DefaultChatTransport({
+    //   fetch: async (url, options) => {
+    //     const res = await fetch(url, options);
+    //     if (res.status === 401) {
+    //       signOut();
+    //     }
+    //     return res;
+    //   },
+    // })
   });
 
 
