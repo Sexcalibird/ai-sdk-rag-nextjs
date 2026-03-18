@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
 
@@ -16,6 +16,7 @@ export default function Chat() {
   const [img, setImg] = useState<any>();
 
   // const { chat, setChat } = useChatStore();
+  const { data: session } = useSession();
 
 
   const { messages, sendMessage, status } = useChat({
@@ -23,15 +24,17 @@ export default function Chat() {
     // onFinish: (modelMessages) => {
     //   setChat(modelMessages.messages);
     // }
-    // transport: new DefaultChatTransport({
-    //   fetch: async (url, options) => {
-    //     const res = await fetch(url, options);
-    //     if (res.status === 401) {
-    //       signOut();
-    //     }
-    //     return res;
-    //   },
-    // })
+    transport: new DefaultChatTransport({
+      // fetch: async (url, options) => {
+      //   const res = await fetch('https://chatcskh.capnuochaiphong.com.vn:4433/api/chatbot/chat', options);
+      //   if (res.status === 401) {
+      //     signOut();
+      //   }
+      //   return res;
+      // },
+      fetch: fetch,
+      api: 'https://chatcskh.capnuochaiphong.com.vn:4433/api/chatbot/chat'
+    })  
   });
 
 

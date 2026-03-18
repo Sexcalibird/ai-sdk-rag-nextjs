@@ -1,8 +1,8 @@
 export { default } from "next-auth/middleware";
 
 // "/((?!api|_next|auth|signin).*)"
-// export const config = { matcher: ["/((?!api|_next|auth|signin|public).*)"] };
-export const config = { matcher: ["/((?!api/auth|_next|signin|public).*)"] };
+export const config = { matcher: ["/((?!api|_next|auth|signin|public).*)"] };
+// export const config = { matcher: ["/((?!api/auth|_next|signin|public).*)"] };
 
 [
         {
