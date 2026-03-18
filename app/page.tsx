@@ -17,7 +17,7 @@ export default function Chat() {
 
   // const { chat, setChat } = useChatStore();
   const { data: session } = useSession();
-
+  
 
   const { messages, sendMessage, status } = useChat({
     // messages: chat,
@@ -25,16 +25,14 @@ export default function Chat() {
     //   setChat(modelMessages.messages);
     // }
     transport: new DefaultChatTransport({
-      // fetch: async (url, options) => {
-      //   const res = await fetch('https://chatcskh.capnuochaiphong.com.vn:4433/api/chatbot/chat', options);
-      //   if (res.status === 401) {
-      //     signOut();
-      //   }
-      //   return res;
-      // },
-      fetch: fetch,
-      api: 'https://chatcskh.capnuochaiphong.com.vn:4433/api/chatbot/chat'
-    })  
+      fetch: async (url, options) => {
+        const res = await fetch('https://chatcskh.capnuochaiphong.com.vn:4433/api/chatbot/chat', options);
+        if (res.status === 401) {
+          signOut();
+        }
+        return res;
+      },
+    })
   });
 
 
@@ -66,7 +64,10 @@ export default function Chat() {
     if (!input && !img) return;
     sendMessage(
       { text: img ? (!!input ? input : 'Hình ảnh') : input },
-      { body: { customer, image: img } }
+      {
+        body: { customer, image: img },
+        headers: { 'Authorization': `Bearer ${session?.user?.token}` }
+      },
     );
     setInput('');
     setImg(undefined);
@@ -91,7 +92,7 @@ export default function Chat() {
     reader.readAsDataURL(file);
   };
 
-  
+
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4 max-sm:h-screen">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[700px] max-sm:h-full">
